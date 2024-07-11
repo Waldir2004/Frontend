@@ -1,14 +1,9 @@
-
 document.addEventListener("DOMContentLoaded", function() {
     axios.get('http://127.0.0.1:8000/get_schools')
         .then(function(response) {
             let data = response.data.resultado;
             let tableBody = document.querySelector("#lista-colegios tbody");
             tableBody.innerHTML = "";
-
-            function mapState(state) {
-                return state === 1 ? "Activo" : "Inactivo";
-            }
 
             function formatTimestamp(timestamp) {
                 if (timestamp) {
@@ -29,43 +24,89 @@ document.addEventListener("DOMContentLoaded", function() {
 
                 cellId.textContent = school.id;
                 cellName.textContent = school.name;
-                cellState.textContent = mapState(school.state);
+                cellState.textContent = school.state;
                 cellAdded.textContent = formatTimestamp(school.created_at);
                 cellUpdated.textContent = formatTimestamp(school.updated_at);
 
                 cellDeleted.innerHTML = `
-                    <button type="button" class="btn btn-primary" onclick="showUpdateModal(${school.id}, '${school.name}', ${school.state})">
-                        Editar
+                    <button type="button" class="btn btn-primary" onclick="showViewModal(${school.id}, '${school.name}', '${school.state}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="showUpdateModal(${school.id}, '${school.name}', '${school.state}')">
+                        <i class="fas fa-edit"></i>
                     </button> 
                     <button type="button" class="btn btn-danger" onclick="showDeleteModal(${school.id})">
-                        Eliminar
+                        <i class="fas fa-trash-alt"></i>
                     </button>
+
                 `;
+            });
+            $('#lista-colegios').DataTable({
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ entradas totales)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "No se encontraron resultados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
             });
         })
         .catch(function(error) {
             console.error('Error fetching data: ', error);
         });
+
+    
 });
 
 function showUpdateModal(schoolId, name, state) {
     document.getElementById("update-id").value = schoolId;
     document.getElementById("update-name").value = name;
-    document.getElementById("update-state").value = state;
+    populateStates("update-state", state);
     $('#updateModal').modal('show');
 }
 
-function showDeleteModal(schoolId) {
-    document.getElementById("delete-id").value = schoolId;
-    $('#deleteModal').modal('show');
+
+function populateStates(selectId, selectedState) {
+    axios.get('http://127.0.0.1:8000/get_parameter_values/2')
+        .then(function(response) {
+            let data = response.data.resultado;
+            let selectState = document.getElementById(selectId);
+            selectState.innerHTML = "";
+
+            data.forEach(param => {
+                let option = document.createElement("option");
+                option.value = param.id;
+                option.text = param.name;
+                if (param.id == selectedState) {
+                    option.selected = true;
+                }
+                selectState.appendChild(option);
+            });
+        })
+        .catch(function(error) {
+            console.error('Error fetching states: ', error);
+        });
 }
 
 function updateSchool() {
     const schoolId = document.getElementById("update-id").value;
     const schoolName = document.getElementById("update-name").value;
     const schoolState = document.getElementById("update-state").value;
-
-    axios.put(`http://127.0.0.1:8000/edit_schools/${schoolId}`, {
+    console.log("schoolState:", schoolId);
+    axios.put(`http://127.0.0.1:8000/edit_school/${schoolId}`, {
         name: schoolName,
         state: schoolState
     })
@@ -78,10 +119,14 @@ function updateSchool() {
     });
 }
 
+function showDeleteModal(schoolId) {
+    document.getElementById("delete-id").value = schoolId;
+    $('#deleteModal').modal('show');}
+
 function deleteSchool() {
     const schoolId = document.getElementById("delete-id").value;
 
-    axios.delete(`http://127.0.0.1:8000/delete_schools/${schoolId}`)
+    axios.delete(`http://127.0.0.1:8000/delete_school/${schoolId}`)
     .then(response => {
         $('#deleteModal').modal('hide');
         location.reload();
@@ -91,14 +136,19 @@ function deleteSchool() {
     });
 }
 
+$('#registerModal').on('show.bs.modal', function (event) {
+    populateStates('create-state');
+});
+
 function createSchool() {
     const name = document.getElementById("name").value;
-    const state = document.getElementById("state").value;
+    const state = document.getElementById("create-state").value;
 
     const newSchool = {
         name: name,
         state: state
     };
+
     if (name !== ""){
         axios.post('http://127.0.0.1:8000/create_Schools', newSchool)
             .then(function (response) {
@@ -114,13 +164,17 @@ function createSchool() {
             })
             .catch(function (error) {
                 console.error('Error creating school:', error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Oops...',
+                    text: 'There was an error creating the school. Please try again later.'
+                });
             });
     }else{
         Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: 'There was an error creating the school. Please try again later.'
+            text: 'Please enter the name of the school.'
         });
     }
 }
-
