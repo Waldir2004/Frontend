@@ -1,8 +1,8 @@
 document.addEventListener("DOMContentLoaded", function() {
-    axios.get('http://127.0.0.1:8000/get_schools')
+    axios.get('http://127.0.0.1:8000/get_meetings')
         .then(function(response) {
             let data = response.data.resultado;
-            let tableBody = document.querySelector("#lista-colegios tbody");
+            let tableBody = document.querySelector("#lista-reuniones tbody");
             tableBody.innerHTML = "";
 
             function formatTimestamp(timestamp) {
@@ -13,35 +13,38 @@ document.addEventListener("DOMContentLoaded", function() {
                 return '';
             }
 
-            data.forEach((school, index) => {
+            data.forEach((meeting, index) => {
                 let row = tableBody.insertRow(index);
                 let cellId = row.insertCell(0);
-                let cellName = row.insertCell(1);
-                let cellState = row.insertCell(2);
-                let cellAdded = row.insertCell(3);
-                let cellUpdated = row.insertCell(4);
-                let cellDeleted = row.insertCell(5);
+                let cellTitle = row.insertCell(1);
+                let cellDescription = row.insertCell(2);
+                let cellDate = row.insertCell(3);
+                let cellTime = row.insertCell(4);
+                let cellSchoolId = row.insertCell(5);
+                let cellState = row.insertCell(6);
+                let cellDeleted = row.insertCell(7);
 
-                cellId.textContent = school.id;
-                cellName.textContent = school.name;
-                cellState.textContent = school.state;
-                cellAdded.textContent = formatTimestamp(school.created_at);
-                cellUpdated.textContent = formatTimestamp(school.updated_at);
+                cellId.textContent = meeting.id;
+                cellTitle.textContent = meeting.title;
+                cellDescription.textContent = meeting.description;
+                cellDate.textContent = formatTimestamp(meeting.date);
+                cellTime.textContent = meeting.time;
+                cellSchoolId.textContent = meeting.school_id;
+                cellState.textContent = meeting.state;
 
                 cellDeleted.innerHTML = `
-                    <button type="button" class="btn btn-primary" onclick="showViewModal(${school.id}, '${school.name}', '${school.state}')">
+                    <button type="button" class="btn btn-primary" onclick="showViewModal(${meeting.id}, '${meeting.title}', '${meeting.description}', '${meeting.date}', '${meeting.time}', '${meeting.school_id}', '${meeting.state}')">
                         <i class="fas fa-eye"></i>
                     </button>
-                    <button type="button" class="btn btn-warning" onclick="showUpdateModal(${school.id}, '${school.name}', '${school.state}')">
+                    <button type="button" class="btn btn-warning" onclick="showUpdateModal(${meeting.id}, '${meeting.title}', '${meeting.description}', '${meeting.date}', '${meeting.time}', '${meeting.school_id}', '${meeting.state}')">
                         <i class="fas fa-edit"></i>
                     </button> 
-                    <button type="button" class="btn btn-danger" onclick="showDeleteModal(${school.id})">
+                    <button type="button" class="btn btn-danger" onclick="showDeleteModal(${meeting.id})">
                         <i class="fas fa-trash-alt"></i>
                     </button>
-
                 `;
             });
-            $('#lista-colegios').DataTable({
+            $('#lista-reuniones').DataTable({
                 language: {
                     "decimal": "",
                     "emptyTable": "No hay información",
@@ -101,32 +104,93 @@ function populateStates(selectId, selectedState) {
         });
 }
 
-function updateSchool() {
-    const schoolId = document.getElementById("update-id").value;
-    const schoolName = document.getElementById("update-name").value;
-    const schoolState = document.getElementById("update-state").value;
-    console.log("schoolState:", schoolId);
-    axios.put(`http://127.0.0.1:8000/edit_school/${schoolId}`, {
-        name: schoolName,
-        state: schoolState
-    })
-    .then(response => {
-        $('#updateModal').modal('hide');
-        location.reload();
-    })
-    .catch(error => {
-        console.error('Error updating school: ', error);
-    });
+function updateMeeting() {
+    const meetingId = parseInt(document.getElementById("update-meeting-id").value, 10);
+    const title = document.getElementById("update-title").value;
+    const description = document.getElementById("update-description").value;
+    const date = document.getElementById("update-date").value; // Format: YYYY-MM-DD
+    const time = document.getElementById("update-time").value; // Format: HH:MM
+    const schoolId = parseInt(document.getElementById("update-school").value, 10);
+    const state = parseInt(document.getElementById("update-state").value, 10);
+
+    console.log("Updating meeting with ID:", meetingId);
+
+    if (!isNaN(meetingId) && title && description && date && time && !isNaN(schoolId) && !isNaN(state)) {
+        axios.put(`http://127.0.0.1:8000/edit_meetings/${meetingId}`, {
+            title: title,
+            description: description,
+            date: date,
+            time: time,
+            school_id: schoolId,
+            state: state
+        })
+        .then(response => {
+            Swal.fire({
+                icon: 'success',
+                title: 'Meeting Updated',
+                text: 'The meeting has been successfully updated.',
+                timer: 2000
+            }).then(function () {
+                $('#updateMeetingModal').modal('hide');
+                location.reload(); // Reload the page or handle navigation
+            });
+        })
+        .catch(error => {
+            console.error('Error updating meeting: ', error);
+            Swal.fire({
+                icon: 'error',
+                title: 'Oops...',
+                text: 'There was an error updating the meeting. Please try again later.'
+            });
+        });
+    } else {
+        Swal.fire({
+            icon: 'error',
+            title: 'Oops...',
+            text: 'Please fill out all fields correctly.'
+        });
+    }
 }
+
+// Poblar los campos de colegios y estados cuando el modal se abre
+document.addEventListener("DOMContentLoaded", function() {
+    const stateSelect = document.getElementById("update-state");
+    const stateOptions = [
+        { value: 1, text: "Activo" },
+        { value: 0, text: "Inactivo" }
+    ];
+    stateOptions.forEach(option => {
+        const opt = document.createElement("option");
+        opt.value = option.value;
+        opt.textContent = option.text;
+        stateSelect.appendChild(opt);
+    });
+
+    const schoolSelect = document.getElementById("update-school");
+
+    axios.get('http://127.0.0.1:8000/schools')
+        .then(function(response) {
+            const schools = response.data;
+            schools.forEach(school => {
+                const opt = document.createElement("option");
+                opt.value = school.id;
+                opt.textContent = school.name;
+                schoolSelect.appendChild(opt);
+            });
+        })
+        .catch(function(error) {
+            console.error('Error fetching schools:', error);
+        });
+});
 
 function showDeleteModal(schoolId) {
     document.getElementById("delete-id").value = schoolId;
     $('#deleteModal').modal('show');}
 
-function deleteSchool() {
-    const schoolId = document.getElementById("delete-id").value;
+function deleteMeeting() {
+    const meeting_id = document.getElementById("delete-id").value;
 
-    axios.delete(`http://127.0.0.1:8000/delete_school/${schoolId}`)
+    axios.delete(`http://127.0.0.1:8000/delete_meetings/${meeting_id}`)
     .then(response => {
         $('#deleteModal').modal('hide');
         location.reload();
@@ -140,41 +204,92 @@ $('#registerModal').on('show.bs.modal', function (event) {
     populateStates('create-state');
 });
 
-function createSchool() {
-    const name = document.getElementById("name").value;
-    const state = document.getElementById("create-state").value;
+document.addEventListener("DOMContentLoaded", function() {
+    const stateSelect = document.getElementById("state");
 
-    const newSchool = {
-        name: name,
-        state: state
+    const options = [
+        { value: 1, text: "Activo" },  // value as integer
+        { value: 0, text: "Inactivo" } // value as integer
+    ];
+
+    options.forEach(option => {
+        const opt = document.createElement("option");
+        opt.value = option.value;
+        opt.textContent = option.text;
+        stateSelect.appendChild(opt);
+    });
+    const schoolSelect = document.getElementById("school");
+
+    axios.get('http://127.0.0.1:8000/get_dicschools')
+        .then(function(response) {
+            const schools = response.data;
+            schools.forEach(school => {
+                const opt = document.createElement("option");
+                opt.value = school.id;
+                opt.textContent = school.name;
+                schoolSelect.appendChild(opt);
+            });
+        })
+        .catch(function(error) {
+            console.error('Error fetching schools:', error);
+        });
+});
+
+
+
+function createMeeting() {
+    const title = document.getElementById("title").value;
+    const description = document.getElementById("description").value;
+    const date = document.getElementById("date").value;
+    const time = document.getElementById("time").value;
+    const school_id = document.getElementById("school").value;
+    const state = document.getElementById("state").value;
+
+    // Convertir el state a número entero
+    const stateInt = parseInt(state);
+
+    // Formatear la fecha y la hora si es necesario
+    const formattedDate = new Date(date).toISOString().split('T')[0];
+    const formattedTime = time;
+
+    const newMeeting = {
+        title: title,
+        description: description,
+        date: formattedDate,
+        time: formattedTime,
+        school_id: parseInt(school_id),
+        state: stateInt // enviar el state como número entero
     };
 
-    if (name !== ""){
-        axios.post('http://127.0.0.1:8000/create_Schools', newSchool)
+    if (title && description && date && time && school_id && !isNaN(stateInt)) {
+        axios.post('http://127.0.0.1:8000/create_meetings', newMeeting)
             .then(function (response) {
-                console.log('School created:', response.data);
+                console.log('Meeting created:', response.data);
                 Swal.fire({
                     icon: 'success',
-                    title: 'School Created',
-                    text: 'The school has been successfully created.',
+                    title: 'Meeting Created',
+                    text: 'The meeting has been successfully created.',
                     timer: 2000
                 }).then(function () {
                     window.location.reload(); // Reload the page or handle navigation
                 });
             })
             .catch(function (error) {
-                console.error('Error creating school:', error);
+                console.error('Error creating meeting:', error.response.data);
                 Swal.fire({
                     icon: 'error',
                     title: 'Oops...',
-                    text: 'There was an error creating the school. Please try again later.'
+                    text: 'There was an error creating the meeting: ' + error.response.data.message
                 });
             });
-    }else{
+    } else {
         Swal.fire({
             icon: 'error',
             title: 'Oops...',
-            text: 'Please enter the name of the school.'
+            text: 'Please fill out all fields.'
         });
     }
 }
+
+
+

@@ -368,7 +368,7 @@
 
                     <div class="d-sm-flex align-items-center justify-content-between mb-4">
                         <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm ml-auto" data-toggle="modal" data-target="#registerModal">
-                            <i class="fas fa-download fa-sm text-white-50"></i> Ingresar Colegios
+                            <i class="fas fa-download fa-sm text-white-50"></i> Crear Reuniones
                         </button>
                     </div>
             
@@ -377,7 +377,7 @@
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="registerModalLabel">Registrar Nuevo Colegio</h5>
+                                    <h5 class="modal-title" id="registerModalLabel">Registrar Nueva Reunión</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
@@ -385,37 +385,58 @@
                                 <div class="modal-body">
                                     <form id="register-form">
                                         <div class="form-group">
-                                            <label for="name">Nombre del Colegio</label>
-                                            <input type="text" class="form-control" id="name" required>
+                                            <label for="title">Título</label>
+                                            <input type="text" class="form-control" id="title" required>
                                         </div>
                                         <div class="form-group">
-                                            <label for="create-state">Estado</label>
-                                            <select class="form-control" id="create-state" required>
+                                            <label for="description">Descripción</label>
+                                            <textarea class="form-control" id="description" required></textarea>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="date">Fecha</label>
+                                            <input type="date" class="form-control" id="date" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="time">Hora</label>
+                                            <input type="time" class="form-control" id="time" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="school">Seleccione el Colegio</label>
+                                            <select class="form-control" id="school" required>
                                                 <!-- Options will be populated dynamically by JavaScript -->
                                             </select>
                                         </div>
-                                        <button type="button" class="btn btn-primary" onclick="createSchool()">Registrar</button>
+                                        <div class="form-group">
+                                            <label for="state">Estado</label>
+                                            <select class="form-control" id="state" required>
+                                                <!-- Options will be populated dynamically by JavaScript -->
+                                            </select>
+                                        </div>
+                                        <button type="button" class="btn btn-primary" onclick="createMeeting()">Registrar</button>
                                     </form>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
             
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Listado de Colegios</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Listado de Reuniones</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="lista-colegios" width="100%" cellspacing="0">
+                                <table class="table table-bordered" id="lista-reuniones" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Nombre</th>
+                                            <th>Titulo</th>
+                                            <th>Descripcion</th>
+                                            <th>Fecha</th>
+                                            <th>Hora</th>
+                                            <th>Colegio</th>
                                             <th>Estado</th>
-                                            <th>Fecha de creacion</th>
-                                            <th>Fecha de Actualizacion</th>
                                             <th>Acciones</th>
                                         </tr>
                                     </thead>
@@ -460,15 +481,15 @@
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteModalLabel">Eliminar Colegio</h5>
+                                    <h5 class="modal-title" id="deleteModalLabel">Eliminar Reunion</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <p>¿Está seguro de que desea eliminar este colegio?</p>
+                                    <p>¿Está seguro de que desea eliminar esta reunion?</p>
                                     <input type="hidden" id="delete-id">
-                                    <button type="button" class="btn btn-danger" onclick="deleteSchool()">Eliminar</button>
+                                    <button type="button" class="btn btn-danger" onclick="deleteMeeting()">Eliminar</button>
                                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                                 </div>
                             </div>
