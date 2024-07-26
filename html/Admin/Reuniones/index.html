@@ -9,7 +9,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Colegios</title>
+    <title>Reuniones</title>
 
     <!-- Custom fonts for this template-->
     <link href="../../../vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -82,7 +82,7 @@
                 </a>
             </li>
             
-            <li class="nav-item">
+            <li class="nav-item active">
                 <a class="nav-link" href="../../Admin/Reuniones/index.html">
                     <i class="fas fa-handshake"></i>
                     <span>Gestión de Reuniones</span>
@@ -141,7 +141,7 @@
                 </a>
             </li>
             
-            <li class="nav-item active">
+            <li class="nav-item">
                 <a class="nav-link" href="../../Admin/Colegios/index.html">
                     <i class="fas fa-school"></i>
                     <span>Colegios</span>
@@ -449,27 +449,43 @@
                     </div>
             
                     <!-- Update Modal -->
-                    <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="updateMeetingModal" tabindex="-1" role="dialog" aria-labelledby="updateMeetingModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
                             <div class="modal-content">
                                 <div class="modal-header">
-                                    <h5 class="modal-title" id="updateModalLabel">Actualizar Colegio</h5>
+                                    <h5 class="modal-title" id="updateMeetingModalLabel">Actualizar Reunión</h5>
                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                         <span aria-hidden="true">&times;</span>
                                     </button>
                                 </div>
                                 <div class="modal-body">
-                                    <form id="update-form">
-                                        <input type="hidden" id="update-id">
+                                    <form id="update-meeting-form">
+                                        <input type="hidden" id="update-meeting-id">
                                         <div class="form-group">
-                                            <label for="update-name">Nombre del Colegio</label>
-                                            <input type="text" class="form-control" id="update-name" required>
+                                            <label for="update-title">Título</label>
+                                            <input type="text" class="form-control" id="update-title" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="update-description">Descripción</label>
+                                            <input type="text" class="form-control" id="update-description" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="update-date">Fecha</label>
+                                            <input type="date" class="form-control" id="update-date" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="update-time">Hora</label>
+                                            <input type="time" class="form-control" id="update-time" required>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="update-school">Colegio</label>
+                                            <select class="form-control" id="update-school" required></select>
                                         </div>
                                         <div class="form-group">
                                             <label for="update-state">Estado</label>
                                             <select class="form-control" id="update-state" required></select>
                                         </div>
-                                        <button type="button" class="btn btn-primary" onclick="updateSchool()">Actualizar</button>
+                                        <button type="button" class="btn btn-primary" onclick="updateMeeting()">Actualizar</button>
                                     </form>
                                 </div>
                             </div>
@@ -521,6 +537,8 @@
             </div>
         </div>
     </div>
+
+
 
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <!-- Bootstrap core JavaScript-->

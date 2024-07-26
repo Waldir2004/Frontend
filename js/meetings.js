@@ -74,13 +74,42 @@ document.addEventListener("DOMContentLoaded", function() {
     
 });
 
-function showUpdateModal(schoolId, name, state) {
-    document.getElementById("update-id").value = schoolId;
-    document.getElementById("update-name").value = name;
+function showUpdateModal(meetingId, title, description, date, time, schoolId, state) {
+    document.getElementById("update-meeting-id").value = meetingId;
+    document.getElementById("update-title").value = title;
+    document.getElementById("update-description").value = description;
+    document.getElementById("update-date").value = date;
+    document.getElementById("update-time").value = time;
+    populateSchools("update-school", schoolId);
     populateStates("update-state", state);
-    $('#updateModal').modal('show');
+    $('#updateMeetingModal').modal('show');
 }
 
+function populateSchools(selectId, selectedSchoolId) {
+    const schoolSelect = document.getElementById(selectId);
+    if (!schoolSelect) {
+        console.error('Element with ID', selectId, 'not found');
+        return;
+    }
+
+    axios.get('http://127.0.0.1:8000/schools')
+        .then(function(response) {
+            const schools = response.data;
+            schoolSelect.innerHTML = '';  // Limpiar opciones actuales
+            schools.forEach(school => {
+                const opt = document.createElement("option");
+                opt.value = school.id;
+                opt.textContent = school.name;
+                if (school.id == selectedSchoolId) {
+                    opt.selected = true; // Seleccionar el colegio actual
+                }
+                schoolSelect.appendChild(opt);
+            });
+        })
+        .catch(function(error) {
+            console.error('Error fetching schools:', error);
+        });
+}
 
 function populateStates(selectId, selectedState) {
     axios.get('http://127.0.0.1:8000/get_parameter_values/2')
@@ -152,36 +181,7 @@ function updateMeeting() {
     }
 }
 
-// Poblar los campos de colegios y estados cuando el modal se abre
-document.addEventListener("DOMContentLoaded", function() {
-    const stateSelect = document.getElementById("update-state");
-    const stateOptions = [
-        { value: 1, text: "Activo" },
-        { value: 0, text: "Inactivo" }
-    ];
-    stateOptions.forEach(option => {
-        const opt = document.createElement("option");
-        opt.value = option.value;
-        opt.textContent = option.text;
-        stateSelect.appendChild(opt);
-    });
 
-    const schoolSelect = document.getElementById("update-school");
-
-    axios.get('http://127.0.0.1:8000/schools')
-        .then(function(response) {
-            const schools = response.data;
-            schools.forEach(school => {
-                const opt = document.createElement("option");
-                opt.value = school.id;
-                opt.textContent = school.name;
-                schoolSelect.appendChild(opt);
-            });
-        })
-        .catch(function(error) {
-            console.error('Error fetching schools:', error);
-        });
-});
 
 function showDeleteModal(schoolId) {
     document.getElementById("delete-id").value = schoolId;
