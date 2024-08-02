@@ -65,7 +65,7 @@ function fetchActivities() {
                 let cellDescription = row.insertCell(2);
                 let cellStartDate = row.insertCell(3);
                 let cellEndDate = row.insertCell(4);
-                let cellSchoolName = row.insertCell(5);
+                let cellSchoolId = row.insertCell(5);
                 let cellStateId = row.insertCell(6);
                 let cellActions = row.insertCell(7);
 
@@ -74,17 +74,43 @@ function fetchActivities() {
                 cellDescription.textContent = activity.description;
                 cellStartDate.textContent = formatTimestamp(activity.start_date);
                 cellEndDate.textContent = formatTimestamp(activity.end_date);
-                cellSchoolId.textContent = activity.school_name;
+                cellSchoolId.textContent = activity.school_id;
                 cellStateId.textContent = activity.state_id;
 
                 cellActions.innerHTML = `
-                    <button type="button" class="btn btn-primary" onclick="showUpdateModal(${activity.id}, '${activity.title}', '${activity.description}', '${activity.start_date}', '${activity.end_date}', ${activity.school_name}, ${activity.state_id})">
-                        Editar
+                    <button type="button" class="btn btn-primary" onclick="showViewModal(${activity.id}, '${activity.title}', '${activity.description}', '${activity.start_date}', '${activity.end_date}', '${activity.school_id}', '${activity.state_id}')">
+                        <i class="fas fa-eye"></i>
+                    </button>
+                    <button type="button" class="btn btn-warning" onclick="showUpdateModal(${activity.id}, '${activity.title}', '${activity.description}', '${activity.start_date}', '${activity.end_date}', '${activity.school_id}', '${activity.state_id}')">
+                        <i class="fas fa-edit"></i>
                     </button> 
                     <button type="button" class="btn btn-danger" onclick="showDeleteModal(${activity.id})">
-                        Eliminar
+                        <i class="fas fa-trash-alt"></i>
                     </button>
                 `;
+
+            });
+            $('#activities-table').DataTable({
+                language: {
+                    "decimal": "",
+                    "emptyTable": "No hay información",
+                    "info": "Mostrando _START_ a _END_ de _TOTAL_ entradas",
+                    "infoEmpty": "Mostrando 0 a 0 de 0 entradas",
+                    "infoFiltered": "(Filtrado de _MAX_ entradas totales)",
+                    "infoPostFix": "",
+                    "thousands": ",",
+                    "lengthMenu": "Mostrar _MENU_ entradas",
+                    "loadingRecords": "Cargando...",
+                    "processing": "Procesando...",
+                    "search": "Buscar:",
+                    "zeroRecords": "No se encontraron resultados",
+                    "paginate": {
+                        "first": "Primero",
+                        "last": "Último",
+                        "next": "Siguiente",
+                        "previous": "Anterior"
+                    }
+                }
             });
         })
         .catch(function(error) {
@@ -101,6 +127,28 @@ function showUpdateModal(id, title, description, startDate, endDate, schoolId, s
     document.getElementById("update-activity-school-id").value = schoolId;
     document.getElementById("update-activity-state-id").value = stateId;
     $('#updateModal').modal('show');
+}
+
+function populateStates(selectId, selectedState) {
+    axios.get('http://127.0.0.1:8000/get_parameter_values/2')
+        .then(function(response) {
+            let data = response.data.resultado;
+            let selectState = document.getElementById(selectId);
+            selectState.innerHTML = "";
+
+            data.forEach(param => {
+                let option = document.createElement("option");
+                option.value = param.id;
+                option.text = param.name;
+                if (param.id == selectedState) {
+                    option.selected = true;
+                }
+                selectState.appendChild(option);
+            });
+        })
+        .catch(function(error) {
+            console.error('Error fetching states: ', error);
+        });
 }
 
 function updateActivity() {

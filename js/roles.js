@@ -59,22 +59,6 @@ document.addEventListener("DOMContentLoaded", function() {
         });
 });
 
-function createRole() {
-    let role = {
-        name: document.getElementById("role-name").value,
-        state: document.getElementById("state").value
-    };
-
-    axios.post('http://127.0.0.1:8000/create_rol', role)
-        .then(function(response) {
-            alert(response.data.resultado);
-            $('#registerRoleModal').modal('hide');
-            location.reload(); // Refresh the page to show updated role list
-        })
-        .catch(function(error) {
-            console.error('Error creating role: ', error);
-        });
-}
 
 function showUpdateRoleModal(roleId, name, state) {
     document.getElementById("update-role-id").value = roleId;

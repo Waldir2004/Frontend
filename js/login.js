@@ -1,84 +1,58 @@
-// function login() {
-//     let email = document.getElementById("email.txt").value;
-//     let contra = document.getElementById("clave.txt").value;
-//     let rol = document.getElementById('rol').value;
-//     axios({
-//         method:'GET',
-//         url: 'http://127.0.0.1:8000/login/'+email,
-//     }).then(function(response){
-//         let datos=response.data;
-//         let i=0, m='';
-//         for ( i=0;i<datos.length ;i++){
-//             if (email==datos[i].email && contra==datos[i].contraseña){
-//                 if (rol == "Administrador"){
-//                     localStorage.setItem('nombre',datos[i].nombre)
-//                     localStorage.setItem('rol',rol)
-//                     localStorage.setItem('id_usuario',datos[i].id_usuario)
-//                     Swal.fire({
-//                         position: "center",
-//                         icon: "success",
-//                         title: "Bienvenido Usuario",
-//                         showConfirmButton: false,
-//                         timer: 2000,
-//                         });
-//                         setTimeout(function () {
-//                         window.location = "../html/Admin/dashboard.html";
-//                         }, 2000);
-//                     }
-//                 }
-//                 if(rol=="Coordinador"){
-//                     localStorage.setItem('nombre',datos[i].nombre)
-//                     localStorage.setItem('rol',rol)
-//                     localStorage.setItem('id_usuario',datos[i].id_usuario)
-//                     Swal.fire({
-//                         position: "center",
-//                         icon: "success",
-//                         title: " Bienveniodo Coordinador",
-//                         showConfirmButton: false,
-//                         timer: 2000,
-//                         });
-//                         setTimeout(function () {
-//                         window.location = "../html/Coordinador/dashboard.html";
-//                         }, 2000);
-//                     } 
-//                     if(rol=="Estudiante"){
-//                         localStorage.setItem('nombre',datos[i].nombre)
-//                         localStorage.setItem('rol',rol)
-//                         localStorage.setItem('id_usuario',datos[i].id_usuario)
-//                         Swal.fire({
-//                             position: "center",
-//                             icon: "success",
-//                             title: " Bienvenido Estudiante",
-//                             showConfirmButton: false,
-//                             timer: 2000,
-//                             });
-//                             setTimeout(function () {
-//                             window.location = "../html/Estudiante/dashboard.html";
-//                             }, 2000);
-//                         }
-                
-//                 }
-//             }
-//         )}
+document.addEventListener("DOMContentLoaded", function() {
+    async function login(event) {
+        event.preventDefault();
+        
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("clave").value;
+        
+        try {
+            const response = await axios.post("http://127.0.0.1:8000/token", {
+                email: email,
+                password: password
+            });
+            
+            const token = response.data.access_token;
+            localStorage.setItem("token", token);
 
+            const decodedToken = parseJwt(token);
+            console.log("Decoded Token: ", decodedToken);
+            localStorage.setItem("decodedToken", JSON.stringify(decodedToken));
 
-function login(event){
-    event.preventDefault(); 
-    let email = document.getElementById("email").value;
-    let contra = document.getElementById("clave").value;
-    let rol = document.getElementById('rol').value;
+            const roleName = decodedToken.role_name;
 
-    if (email && contra) {
-        if (rol == "Administrador") {
-            window.location.href = "html/Admin/dashboard.html";
-        } else if (rol == "Coordinador") {
-            window.location.href = "html/Coordinador/dashboard.html";
-        } else if (rol == "Estudiante") {
-            window.location.href = "html/Estudiante/dashboard.html";
-        } else {
-            alert("Rol no reconocido");
+            if (roleName === "Administrador") {
+                window.location.href = "html/Admin/dashboard.html";
+            } else if (roleName === "Coordinador") {
+                window.location.href = "html/Coordinador/dashboard.html";
+            } else if (roleName === "Estudiante") {
+                window.location.href = "html/Estudiante/dashboard.html";
+            } else {
+                alert("Rol no reconocido. Por favor, contacta al administrador.");
+            }
+
+            alert("Inicio de sesión exitoso!");
+
+        } catch (error) {
+            console.error("Error during login: ", error);
+            alert("¡Error de inicio de sesion! Por favor verifique sus credenciales.");
         }
-    } else {
-        alert("Por favor, complete todos los campos.");
     }
-}
+
+    function parseJwt(token) {
+        try {
+            const base64Url = token.split('.')[1];
+            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+            }).join(''));
+
+            return JSON.parse(jsonPayload);
+        } catch (e) {
+            console.error("Token no valido", e);
+            return null;
+        }
+    }
+
+    const loginForm = document.querySelector("form");
+    loginForm.addEventListener("submit", login);
+});
