@@ -92,8 +92,9 @@ function populateSchools(selectId, selectedSchoolId) {
         return;
     }
 
-    axios.get('http://127.0.0.1:8000/schools')
+    axios.get('http://127.0.0.1:8000/get_dicschools')
         .then(function(response) {
+            console.log('Schools received:', response.data);
             const schools = response.data;
             schoolSelect.innerHTML = '';  // Limpiar opciones actuales
             schools.forEach(school => {

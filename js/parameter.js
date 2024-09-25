@@ -68,6 +68,8 @@ function createParameter() {
         description: document.getElementById("parameter-description").value
     };
 
+    alert(parameter)
+
     axios.post('http://127.0.0.1:8000/create_parameter', parameter)
         .then(function(response) {
             alert(response.data.resultado);

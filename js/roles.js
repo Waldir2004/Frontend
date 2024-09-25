@@ -63,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function() {
 function showUpdateRoleModal(roleId, name, state) {
     document.getElementById("update-role-id").value = roleId;
     document.getElementById("update-role-name").value = name;
-    document.getElementById("update_state").value = state;
+    populateStates("update-state", state);
     $('#updateRoleModal').modal('show');
 }
 

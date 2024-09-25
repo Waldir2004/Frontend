@@ -61,8 +61,20 @@ document.addEventListener("DOMContentLoaded", function() {
                         "next": "Siguiente",
                         "previous": "Anterior"
                     }
-                }
+                },
+                dom: 'Bfrtip',
+                buttons: [
+                    {
+                        extend: 'excelHtml5',
+                        title: 'Lista de Colegios'
+                    },
+                    {
+                        extend: 'pdfHtml5',
+                        title: 'Lista de Colegios'
+                    }
+                ]
             });
+            
         })
         .catch(function(error) {
             console.error('Error fetching data: ', error);
@@ -142,12 +154,15 @@ $('#registerModal').on('show.bs.modal', function (event) {
 
 function createSchool() {
     const name = document.getElementById("name").value;
+    alert(name)
     const state = document.getElementById("create-state").value;
 
     const newSchool = {
         name: name,
         state: state
     };
+
+    alert(JSON.stringify(newSchool, null, 2))
 
     if (name !== ""){
         axios.post('http://127.0.0.1:8000/create_Schools', newSchool)
@@ -177,4 +192,28 @@ function createSchool() {
             text: 'Please enter the name of the school.'
         });
     }
+}
+
+
+function exportTableToExcel(tableId, filename = '') {
+    let table = document.getElementById(tableId);
+    let workbook = XLSX.utils.table_to_book(table, { sheet: "Sheet1" });
+    let exportFilename = filename ? filename + '.xlsx' : 'exported_data.xlsx';
+    XLSX.writeFile(workbook, exportFilename);
+}
+
+function exportTableToPDF(tableId, filename = '') {
+    let doc = new jspdf.jsPDF('p', 'pt', 'a4');
+    let table = document.getElementById(tableId);
+
+    html2canvas(table, {
+        onrendered: function(canvas) {
+            let imgData = canvas.toDataURL('image/png');
+            let imgWidth = doc.internal.pageSize.getWidth();
+            let imgHeight = (canvas.height * imgWidth) / canvas.width;
+            doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+            let exportFilename = filename ? filename + '.pdf' : 'exported_data.pdf';
+            doc.save(exportFilename);
+        }
+    });
 }

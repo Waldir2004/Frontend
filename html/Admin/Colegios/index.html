@@ -108,7 +108,14 @@
                             </div>
                         </div>
                     </div>
-            
+
+                    <div class="export-buttons">
+                        <button onclick="exportTableToExcel('lista-colegios', 'schools_data')">Exportar a Excel</button>
+                        <button onclick="exportTableToPDF('lista-colegios', 'schools_data')">Exportar a PDF</button>
+                    </div>
+                    
+
+
                     <!-- Update Modal -->
                     <div class="modal fade" id="updateModal" tabindex="-1" role="dialog" aria-labelledby="updateModalLabel" aria-hidden="true">
                         <div class="modal-dialog" role="document">
@@ -218,6 +225,11 @@
     <script src="../../../components/footer-component/footer-component.js"></script>
     <script src="../../../components/top-navbar-component/top-navbar-component.js"></script>
     <script src="../../../components/brand-component/brand-component.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.0/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
     
 </body>
 

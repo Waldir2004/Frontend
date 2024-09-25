@@ -56,126 +56,125 @@
                         </button>
                     </div>
             
-                    <!-- Register Modal -->
-                    <div class="modal fade" id="createReportModal" tabindex="-1" role="dialog" aria-labelledby="createReportModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="createReportModalLabel">Crear Nuevo Reporte</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="create-report-form">
-                                        <div class="form-group">
-                                            <label for="type_report_id">Tipo de Reporte</label>
-                                            <select class="form-control" id="type_report_id" required>
-                                                <option value="1"> 1</option><!-- Options will be populated dynamically by JavaScript -->
-                                            </select>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="reported_user_id">Usuario Reportado</label>
-                                            <input type="text" class="form-control" id="reported_user_id">
-                                            <div id="reported-user-list"></div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="reporter_id">Reportante</label>
-                                            <input type="text" class="form-control" id="reporter_id">
-                                            <div id="reporter-list"></div>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="description">Descripción</label>
-                                            <textarea class="form-control" id="description" rows="3" required></textarea>
-                                        </div>
-                                        <button type="button" class="btn btn-primary" onclick="createReport()">Crear Reporte</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Create Report Modal -->
+<div class="modal fade" id="createReportModal" tabindex="-1" role="dialog" aria-labelledby="createReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="createReportModalLabel">Crear Nuevo Reporte</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="create-report-form">
+                    <div class="form-group">
+                        <label for="type_report_id">Tipo de Reporte</label>
+                        <select class="form-control" id="type_report_id" required>
+                            <option value="">Seleccionar Tipo</option>
+                        </select>
                     </div>
+                    <div class="form-group">
+                        <label for="reported_user_id">Usuario Reportado</label>
+                        <input type="text" class="form-control" id="reported_user_id" required>
+                        <div id="reported-user-list"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="reporter_id">Reportante</label>
+                        <input type="text" class="form-control" id="reporter_id" required>
+                        <div id="reporter-list"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Descripción</label>
+                        <textarea class="form-control" id="description" rows="3" required></textarea>
+                    </div>
+                    <button type="button" class="btn btn-primary" onclick="createReport()">Crear Reporte</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
             
-                    <!-- DataTales Example -->
-                    <div class="card shadow mb-4">
-                        <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Listado de Reportes</h6>
-                        </div>
-                        <div class="card-body">
-                            <div class="table-responsive">
-                                <table class="table table-bordered" id="lista-reportes" width="100%" cellspacing="0">
-                                    <thead>
-                                        <tr>
-                                            <th>ID</th>
-                                            <th>type_report_id</th>
-                                            <th>Reportado</th>
-                                            <th>Reportante</th>
-                                            <th>Descripcion</th>
-                                            <th>Acciones</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">Listado de Reportes</h6>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table table-bordered" id="lista-reportes" width="100%" cellspacing="0">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Tipo de Reporte</th>
+                        <th>Reportante</th>
+                        <th>Usuario Reportado</th>
+                        <th>Descripción</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- DataTable data will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
             
-                    <!-- Update Modal -->
-                    <div class="modal fade" id="updateReportModal" tabindex="-1" role="dialog" aria-labelledby="updateReportModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="updateReportModalLabel">Actualizar Reporte</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <form id="update-report-form">
-                                        <div class="form-group">
-                                            <label for="update-type_report_id">Tipo de Reporte</label>
-                                            <input type="number" class="form-control" id="update-type_report_id" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="update-reporter_id">Reportante</label>
-                                            <input type="text" class="form-control" id="update-reporter_id" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="update-reported_user_id">Usuario Reportado</label>
-                                            <input type="text" class="form-control" id="update-reported_user_id" required>
-                                        </div>
-                                        <div class="form-group">
-                                            <label for="update-description">Descripción</label>
-                                            <textarea class="form-control" id="update-description" rows="3" required></textarea>
-                                        </div>
-                                        <input type="hidden" id="update-report-id">
-                                        <button type="button" class="btn btn-primary" onclick="updateReport()">Actualizar</button>
-                                    </form>
-                                </div>
-                            </div>
-                        </div>
+                    <!-- Update Report Modal -->
+<div class="modal fade" id="updateReportModal" tabindex="-1" role="dialog" aria-labelledby="updateReportModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateReportModalLabel">Actualizar Reporte</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="update-report-form">
+                    <div class="form-group">
+                        <label for="update-type_report_id">Tipo de Reporte</label>
+                        <input type="number" class="form-control" id="update-type_report_id" required>
                     </div>
-                    <!-- Delete Confirmation Modal -->
-                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="deleteModalLabel">Eliminar Colegio</h5>
-                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                        <span aria-hidden="true">&times;</span>
-                                    </button>
-                                </div>
-                                <div class="modal-body">
-                                    <p>¿Está seguro de que desea eliminar este colegio?</p>
-                                    <input type="hidden" id="delete-id">
-                                    <button type="button" class="btn btn-danger" onclick="deleteSchool()">Eliminar</button>
-                                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="form-group">
+                        <label for="update-reporter_id">Reportante</label>
+                        <input type="text" class="form-control" id="update-reporter_id" required>
                     </div>
-                </div>
+                    <div class="form-group">
+                        <label for="update-reported_user_id">Usuario Reportado</label>
+                        <input type="text" class="form-control" id="update-reported_user_id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="update-description">Descripción</label>
+                        <textarea class="form-control" id="update-description" rows="3" required></textarea>
+                    </div>
+                    <input type="hidden" id="update-report-id">
+                    <button type="button" class="btn btn-primary" onclick="updateReport()">Actualizar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Eliminar Reporte</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>¿Está seguro de que desea eliminar este reporte?</p>
+                <input type="hidden" id="delete-id">
+                <button type="button" class="btn btn-danger" onclick="deleteReport()">Eliminar</button>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+            </div>
+        </div>
+    </div>
+</div>
 
     <!-- Scroll to Top Button-->
     <a class="scroll-to-top rounded" href="#page-top">

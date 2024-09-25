@@ -3,8 +3,8 @@ function createActivity() {
     const description = document.getElementById("activity-description").value;
     const startDate = document.getElementById("activity-start-date").value;
     const endDate = document.getElementById("activity-end-date").value;
-    const schoolId = document.getElementById("activity-school-id").value;
-    const stateId = document.getElementById("activity-state-id").value;
+    const schoolId = document.getElementById("create-school").value;
+    const stateId = document.getElementById("create-state").value;
 
     if (title && description && startDate && endDate && schoolId && stateId) {
         axios.post('http://127.0.0.1:8000/create_activities', {
@@ -38,6 +38,11 @@ function createActivity() {
         });
     }
 }
+
+$('#createActivityModal').on('show.bs.modal', function () {
+    populateSchools('create-school');  // Llenar el selector de colegios
+    populateStates('create-state');    // Llenar el selector de estados
+});
 
 document.addEventListener("DOMContentLoaded", function() {
     fetchActivities();
@@ -124,8 +129,8 @@ function showUpdateModal(id, title, description, startDate, endDate, schoolId, s
     document.getElementById("update-activity-description").value = description;
     document.getElementById("update-activity-start-date").value = startDate;
     document.getElementById("update-activity-end-date").value = endDate;
-    document.getElementById("update-activity-school-id").value = schoolId;
-    document.getElementById("update-activity-state-id").value = stateId;
+    populateSchools("update-school", schoolId);
+    populateStates("update-state", stateId);
     $('#updateModal').modal('show');
 }
 
@@ -151,14 +156,41 @@ function populateStates(selectId, selectedState) {
         });
 }
 
+function populateSchools(selectId, selectedSchoolId) {
+    const schoolSelect = document.getElementById(selectId);
+    if (!schoolSelect) {
+        console.error('Element with ID', selectId, 'not found');
+        return;
+    }
+
+    axios.get('http://127.0.0.1:8000/get_dicschools')
+        .then(function(response) {
+            console.log('Schools received:', response.data);
+            const schools = response.data;
+            schoolSelect.innerHTML = '';  // Limpiar opciones actuales
+            schools.forEach(school => {
+                const opt = document.createElement("option");
+                opt.value = school.id;
+                opt.textContent = school.name;
+                if (school.id == selectedSchoolId) {
+                    opt.selected = true; // Seleccionar el colegio actual
+                }
+                schoolSelect.appendChild(opt);
+            });
+        })
+        .catch(function(error) {
+            console.error('Error fetching schools:', error);
+        });
+}
+
 function updateActivity() {
     const id = document.getElementById("update-activity-id").value;
     const title = document.getElementById("update-activity-title").value;
     const description = document.getElementById("update-activity-description").value;
     const startDate = document.getElementById("update-activity-start-date").value;
     const endDate = document.getElementById("update-activity-end-date").value;
-    const schoolId = document.getElementById("update-activity-school-id").value;
-    const stateId = document.getElementById("update-activity-state-id").value;
+    const schoolId = document.getElementById("update-school").value;
+    const stateId = document.getElementById("update-state").value;
 
     if (id && title && description && startDate && endDate && schoolId && stateId) {
         axios.put(`http://127.0.0.1:8000/edit_activities/${id}`, {

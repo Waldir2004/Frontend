@@ -176,8 +176,10 @@ function populateDocumentTypes() {
     axios.get('http://127.0.0.1:8000/get_dictypedocument')
         .then(function(response) {
             let data = response.data;
+            console.log(response.data)
             let selectElement = document.getElementById('document_type');
             let updateselectElement = document.getElementById('update_document_type');
+
             selectElement.innerHTML = ""; // Clear existing options
             updateselectElement.innerHTML = ""; // Clear existing options
 
