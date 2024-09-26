@@ -23,10 +23,18 @@
                     <div class="form-group">
                         <label for="role-state">Estado</label>
                         <select class="form-control" id="state" required>
-                            <!-- Options will be populated dynamically by JavaScript -->
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
                         </select>
                     </div>
-                    <button type="button" class="btn btn-primary" onclick="cargarLOGICA()">Registrar</button>
+                    <div class="form-group">
+                        <label>Asigne los módulos</label>
+                        <div id="modules-list" class="form-check">
+                            
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary" id="register-role-button">Registrar</button>
+
                 </form>
             </div>
         </div>
